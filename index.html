@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Stream</title>
+  <title>Phát camera</title>
 </head>
 <body>
   <h1>Camera đang phát</h1>
@@ -11,20 +11,11 @@
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script>
     const peer = new Peer("my-fixed-id");
-
-    peer.on("open", id => {
-      console.log("🔴 Đang phát với ID:", id);
-
+    peer.on("open", () => {
       navigator.mediaDevices.getUserMedia({ video: true, audio: false })
         .then(stream => {
           document.getElementById("localVideo").srcObject = stream;
-
-          peer.on("call", call => {
-            call.answer(stream);
-          });
-        })
-        .catch(err => {
-          alert("❌ Không thể truy cập camera: " + err.message);
+          peer.on("call", call => call.answer(stream));
         });
     });
   </script>
