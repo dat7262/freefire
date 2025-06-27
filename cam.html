@@ -10,11 +10,13 @@
 
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script>
-const peer = new Peer();
+const peer = new Peer(); // vẫn tạo peer mới
+
 peer.on("open", () => {
-  const call = peer.call("test-id", new MediaStream());
+  const call = peer.call("my-fixed-id", getFakeMediaStream());
+
   call.on("stream", stream => {
-    document.querySelector("video").srcObject = stream;
+    document.getElementById("remoteVideo").srcObject = stream;
   });
 });
 </script>
