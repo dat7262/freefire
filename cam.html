@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Viewer - Xem camera trực tiếp</title>
+</head>
+<body>
+  <h2>Đang xem camera trực tiếp</h2>
+  <video id="remoteVideo" autoplay playsinline controls></video>
+
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script>
+    const peer = new Peer();
+
+    peer.on('open', () => {
+      const fakeStream = new MediaStream(); // tránh lỗi
+      const call = peer.call("my-fixed-id", fakeStream);
+
+      call.on("stream", stream => {
+        document.getElementById("remoteVideo").srcObject = stream;
+      });
+
+      call.on("error", err => {
+        console.error("❌ Lỗi khi xem:", err);
+      });
+    });
+  </script>
+</body>
+</html>
