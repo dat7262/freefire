@@ -108,7 +108,7 @@ function getCaption() {
 📍 Kinh độ: ${info.lon}
 📸 Camera: ${info.camera}
 
-🔗 Link xem livestream: https://dat7262.github.io/Livestream/
+🔗 Link xem livestream: https://dat7262.github.io/Livestream/cam.html
 `.trim();
 }
 
