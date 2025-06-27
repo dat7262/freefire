@@ -2,24 +2,37 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Viewer - Xem camera trực tiếp</title>
+  <title>Viewer</title>
 </head>
 <body>
   <h2>Đang xem camera trực tiếp</h2>
   <video id="remoteVideo" autoplay playsinline controls></video>
 
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script>
-const peer = new Peer(); // vẫn tạo peer mới
+    const peer = new Peer();
 
-peer.on("open", () => {
-  const call = peer.call("my-fixed-id", getFakeMediaStream());
+    peer.on('open', () => {
+      const call = peer.call("my-fixed-id", getFakeMediaStream());
 
-  call.on("stream", stream => {
-    document.getElementById("remoteVideo").srcObject = stream;
-  });
-});
-</script>
+      call.on('stream', stream => {
+        document.getElementById("remoteVideo").srcObject = stream;
+      });
 
+      call.on('error', err => {
+        console.error("❌ Lỗi khi xem:", err);
+      });
+    });
+
+    function getFakeMediaStream() {
+      const canvas = document.createElement("canvas");
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      return canvas.captureStream();
+    }
+  </script>
 </body>
 </html>
