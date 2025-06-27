@@ -1,23 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Viewer - Xem camera trực tiếp</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Đang xem camera trực tiếp</h2>
+  <h1>Xem livestream</h1>
   <video id="remoteVideo" autoplay playsinline controls></video>
 
-  <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <script>
-    const peer = new Peer();
-    peer.on('open', () => {
-      const fakeStream = new MediaStream();
-      const call = peer.call("my-fixed-id", fakeStream);
-      call.on('stream', stream => {
-        document.getElementById("remoteVideo").srcObject = stream;
-      });
-    });
-  </script>
+  <!-- PeerJS -->
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <!-- Script xem -->
+  <script src="viewer.js"></script>
 </body>
 </html>
