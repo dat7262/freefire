@@ -47,21 +47,12 @@
   <!-- Mã JavaScript chính -->
   <script src="main.js"></script>
   <script>
-    const peer = new Peer("my-fixed-id"); // ID cố định
-
-    peer.on("open", () => {
-      console.log("📡 Đang phát với ID:", peer.id);
-
-      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        .then(stream => {
-          document.getElementById("localVideo").srcObject = stream;
-
-          peer.on("call", call => {
-            call.answer(stream);
-          });
-        })
-        .catch(err => alert("❌ Không truy cập được camera: " + err.message));
-    });
-  </script>
+const peer = new Peer("test-id");
+peer.on("open", () => {
+  navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+    peer.on("call", call => call.answer(stream));
+  });
+});
+</script>
 </body>
 </html>
