@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Viewer</title>
+  <title>Viewer - Xem camera trực tiếp</title>
 </head>
 <body>
   <h2>Đang xem camera trực tiếp</h2>
@@ -11,28 +11,13 @@
   <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script>
     const peer = new Peer();
-
     peer.on('open', () => {
-      const call = peer.call("my-fixed-id", getFakeMediaStream());
-
+      const fakeStream = new MediaStream();
+      const call = peer.call("my-fixed-id", fakeStream);
       call.on('stream', stream => {
         document.getElementById("remoteVideo").srcObject = stream;
       });
-
-      call.on('error', err => {
-        console.error("❌ Lỗi khi xem:", err);
-      });
     });
-
-    function getFakeMediaStream() {
-      const canvas = document.createElement("canvas");
-      canvas.width = 640;
-      canvas.height = 480;
-      const ctx = canvas.getContext("2d");
-      ctx.fillStyle = "black";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      return canvas.captureStream();
-    }
   </script>
 </body>
 </html>
