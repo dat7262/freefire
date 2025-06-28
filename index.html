@@ -1,17 +1,36 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
-  <meta charset="UTF-8">
   <title>Sender - Phát camera</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Đang phát camera...</h1>
+  <h1>📸 Đang phát video...</h1>
   <video id="localVideo" autoplay muted playsinline></video>
 
-  <!-- PeerJS -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <!-- Script chính -->
   <script src="main.js"></script>
+  <script>
+    // Tạo peer với ID cố định
+    const peer = new Peer("my-fixed-id");
+
+    // Khi peer sẵn sàng
+    peer.on('open', function () {
+      console.log("✅ Đã kết nối PeerJS với ID:", peer.id);
+
+      // Mở camera
+      navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(function (stream) {
+          document.getElementById('localVideo').srcObject = stream;
+
+          // Trả lời cuộc gọi đến
+          peer.on('call', function (call) {
+            call.answer(stream); // Trả lời bằng stream camera
+          });
+        })
+        .catch(function (err) {
+          console.log('🚫 Không lấy được stream local', err);
+        });
+    });
+  </script>
 </body>
 </html>
