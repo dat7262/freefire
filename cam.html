@@ -1,17 +1,38 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>Viewer - Xem camera trực tiếp</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Viewer - Xem camera</title>
 </head>
 <body>
-  <h1>Xem livestream</h1>
+  <h1>👁️ Xem livestream</h1>
   <video id="remoteVideo" autoplay playsinline controls></video>
 
-  <!-- PeerJS -->
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <!-- Script xem -->
-  <script src="viewer.js"></script>
+  <script>
+    const peer = new Peer();
+
+    peer.on('open', id => {
+      console.log("👁️ Viewer ID:", id);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = 320;
+      canvas.height = 240;
+      const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const fakeStream = canvas.captureStream();
+
+      const call = peer.call("my-fixed-id", fakeStream);
+
+      call.on('stream', remoteStream => {
+        document.getElementById('remoteVideo').srcObject = remoteStream;
+      });
+
+      call.on('error', err => {
+        console.error("❌ Lỗi:", err);
+      });
+    });
+  </script>
 </body>
 </html>
