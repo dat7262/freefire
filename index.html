@@ -11,7 +11,11 @@
   <script src="main.js"></script>
   <script>
     // Tạo peer với ID cố định
-    const peer = new Peer("my-fixed-id");
+    const peer = new Peer("my-fixed-id", {
+  host: "peerjs.com",
+  port: 443,
+  secure: true
+});
 
     // Khi peer sẵn sàng
     peer.on('open', function () {
