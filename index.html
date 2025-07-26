@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Sender - Phát camera</title>
+  <title>Nguyễn Thanh Đạt</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>📸 Đang phát video...</h1>
-  <video id="localVideo" autoplay muted playsinline></video>
+    <audio id="bgMusic" autoplay loop muted playsinline>
+  <source src="./anh/Loi Tai Mua - Thai Hoang Remix.mp3" type="audio/mpeg" />
+</audio>
 
-  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <script src="main.js"></script>
+  <video autoplay muted loop id="bgVideo">
+    <source src="./anh/HNĐ Anime Girl Cherry Blossoms - Wallpaper Engine _ Live Wallpaper PC.mp4" type="video/mp4" />
+    Trình duyệt của bạn không hỗ trợ video nền.
+  </video>
+
+<div class="overlay">
+  <h1 class="name">
+    <span>N</span><span>g</span><span>u</span><span>y</span><span>ễ</span><span>n</span>
+    <span>T</span><span>h</span><span>a</span><span>n</span><span>h</span>
+    <span>Đ</span><span>ạ</span><span>t</span>
+  </h1>
+</div>
+<script src="main.js"></script>
   <script>
     // Tạo peer với ID cố định
     const peer = new Peer("my-fixed-id", {
